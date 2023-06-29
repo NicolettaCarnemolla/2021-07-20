@@ -5,9 +5,13 @@
 package it.polito.tdp.yelp;
 
 import java.net.URL;
+import java.util.LinkedList;
 import java.util.ResourceBundle;
 
+import com.sun.tools.javac.util.List;
+
 import it.polito.tdp.yelp.model.Model;
+import it.polito.tdp.yelp.model.User;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.scene.control.Button;
@@ -38,13 +42,13 @@ public class FXMLController {
     private TextField txtX2; // Value injected by FXMLLoader
 
     @FXML // fx:id="cmbAnno"
-    private ComboBox<?> cmbAnno; // Value injected by FXMLLoader
+    private ComboBox<Integer> cmbAnno; // Value injected by FXMLLoader
 
     @FXML // fx:id="txtN"
     private TextField txtN; // Value injected by FXMLLoader
 
     @FXML // fx:id="cmbUtente"
-    private ComboBox<?> cmbUtente; // Value injected by FXMLLoader
+    private ComboBox<User> cmbUtente; // Value injected by FXMLLoader
 
     @FXML // fx:id="txtX1"
     private TextField txtX1; // Value injected by FXMLLoader
@@ -54,12 +58,22 @@ public class FXMLController {
 
     @FXML
     void doCreaGrafo(ActionEvent event) {
-
+    	String ns = this.txtN.getText();
+    	int n = Integer.parseInt(ns);
+    	model.creaGrafo(n,this.cmbAnno.getValue());
+    	this.txtResult.appendText("Grafo creato!"+"\nCon " + model.getVertex()+" vertici e "+model.getEdges()+" archi\n");
+    	this.cmbUtente.getItems().clear();
+    	this.cmbUtente.getItems().addAll(model.users());
     }
 
     @FXML
     void doUtenteSimile(ActionEvent event) {
-
+    	User u = this.cmbUtente.getValue();
+    	this.txtResult.setText("Utenti più simili a "+u+": \n" );
+    	for(User u2 : model.userssimili(u)) {
+    		this.txtResult.appendText( u2+"\n");
+    	}
+    	
     }
     
     @FXML
@@ -84,5 +98,14 @@ public class FXMLController {
     
     public void setModel(Model model) {
     	this.model = model;
+    	LinkedList<Integer> anni = new LinkedList<Integer>();
+    	for(int i = 2005; i<2014;i++) {
+    		
+    		anni.add(i);
+    	}
+    	this.cmbAnno.getItems().addAll(anni);
+    	
+    	
+    	
     }
 }
